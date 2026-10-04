@@ -11,8 +11,7 @@ For each exercise, explain in 2 sentences why. Do not comment on form or techniq
 and do not assume why a lifter dislikes a lift.
 If a swap list is given, say briefly why those options train the same muscles.
 If a safety warning is given, mention it kindly.
-Mention pain only to say: if anything hurts, stop and see a professional.
-If the lifter is under 18, suggest training with supervision."""
+Mention pain only to say: if anything hurts, stop and see a professional."""
 
 
 def add_entry(state, ex, w1, a1, b1, c1, w2, a2, b2, c2, liked):
@@ -94,6 +93,8 @@ def run(name, age, gender, body_kg, state):
     out = f"### Plan for {name.strip()}\n" + "\n".join(f"- {f}" for f in facts)
     if warnings:
         out += "\n\n### Warnings\n" + "\n".join(f"- {w}" for w in warnings)
+    if age < 18:
+        out += "\n\n> Under 18: please train with adult supervision."
     return out + "\n\n### Coach says\n" + reply
 
 
