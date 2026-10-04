@@ -50,11 +50,13 @@ def clear():
     return [], "Cleared.", render([])
 
 
-def run(name, age, body_kg, state):
+def run(name, age, gender, body_kg, state):
     if not name or not name.strip():
         return "Please enter your name."
     if age is None or not (10 <= age <= 100):
         return "Please enter an age between 10 and 100."
+    if not gender:
+        return "Please select a gender option."
     if body_kg is None or not (30 <= body_kg <= 300):
         return "Please enter a body weight between 30 and 300 kg."
     if not state:
@@ -65,7 +67,7 @@ def run(name, age, body_kg, state):
         n, s = e["name"], e["sessions"]
         d = decide(n, s)
         sets = sets_for(s, d)
-        cap = weight_cap(n, body_kg)
+        cap = weight_cap(n, body_kg, gender)
         warn = ""
         if cap and d["weight"] > cap:
             if s[-1]["weight"] > cap:
@@ -84,7 +86,7 @@ def run(name, age, body_kg, state):
             line += f" | lifter dislikes it; swap options: {swap(n)}"
         facts.append(line)
 
-    prompt = f"Lifter: {name.strip()}, age {int(age)}, {body_kg} kg.\n" + "\n".join(facts)
+    prompt = f"Lifter: {name.strip()}, age {int(age)}, {gender}, {body_kg} kg.\n" + "\n".join(facts)
     try:
         reply = ollama.chat(model=MODEL, messages=[
             {"role": "system", "content": SYSTEM},
@@ -105,6 +107,7 @@ with gr.Blocks(title="LiftCoach") as demo:
     with gr.Row():
         name = gr.Textbox(label="Name")
         age = gr.Number(label="Age", precision=0)
+        gender = gr.Dropdown(["Male", "Female", "Other"], label="Gender")
         body = gr.Number(label="Body weight (kg)")
 
     gr.Markdown("### 2. Add exercises (only the ones you want)")
@@ -135,7 +138,7 @@ with gr.Blocks(title="LiftCoach") as demo:
     add.click(add_entry, [state, ex, w1, a1, b1, c1, w2, a2, b2, c2, liked],
               [state, msg, added])
     clr.click(clear, None, [state, msg, added])
-    go.click(run, [name, age, body, state], out)
+    go.click(run, [name, age, gender, body, state], out)
 
 if __name__ == "__main__":
     demo.launch()  # for phone on same Wi-Fi: To create a public link, set `share=True` in `launch()`
