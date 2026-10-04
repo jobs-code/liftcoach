@@ -71,12 +71,10 @@ def run(name, age, gender, body_kg, state):
         warn = ""
         if cap and d["weight"] > cap:
             if s[-1]["weight"] > cap:
-                warn = (f"Logged weight {s[-1]['weight']} kg is unusually high for "
-                        f"{body_kg} kg body weight. Double-check the input.")
-            else:
-                warn = (f"{d['weight']} kg is a big load for your body weight. "
-                        f"Safer to hold at {s[-1]['weight']} kg and build reps first.")
-                d = {**d, "weight": s[-1]["weight"], "target_reps": d["target_reps"]}
+                warn = (f"Logged weight {s[-1]['weight']} kg is above the typical range for "
+                        f"your body weight. Please confirm it is correct. Holding the "
+                        f"weight until then.")
+                d = {**d, "weight": s[-1]["weight"], "action": "hold until input confirmed"}
             warnings.append(f"{n}: {warn}")
         line = (f"{n}: next {d['weight']} kg, {sets} sets x "
                 f"{d['target_reps']}+ reps ({d['action']})")
